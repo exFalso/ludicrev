@@ -2,6 +2,132 @@
 * Introduction
 * Computational Creativity
 * Evolutionary Design
+** Evolutionary approach
+*** Idea: Encode programs with some representation and evolve the representation
+    - To find a coding which solves a problem
+    - To improve a program performance (efficiency etc.)
+    - Simply to inspect the evolved output
+*** Terminology
+    - Genotype: A coding
+    - Population: The group of genotypes we're evolving
+    - Phenotype: The representation of the genotype (e.g. the actual
+      program the genotype is representing)
+    - Generation: A "batch" of genotypes
+    - Crossover: Two genotypes having sex
+    - Offspring: The result of the crossover
+    - Fitness: Assessment of a phenotype
+*** Overview of method
+    1. Generate initial population randomly
+    2. Evaluate each phenotype
+    3. Pick the fittest genotypes, do crossover and keep the children
+       for the next generation - you might want to introduce some
+       random mutations.
+    4. Check the termination conditions, if they're met we're done, if
+       not go back to step 2.
+    You should keep track of the fittest phenotype encountered so that
+    you can pick that when the algos finishes.
+*** Challenges
+    - Representing codings, they need to be:
+      - Interpretable
+      - Randomizable
+      - Easily manipulable (to do crossover and mutation)
+    - Select pair of individuals to be the parents, needs to specify:
+      - Fitness function
+      - Selection mechanism
+    - Producing offspring, needs to specify:
+      - Crossover operation
+      - Mutations
+*** Types of codings
+    - No coding, you manipulate the result directly - e.g. pictures
+    - Coding "specific to the task at hand" - e.g. tree of filters to
+      apply to a picture
+    - Parameters for a given program - this is obvious (we tune some
+      parameter in a program)
+    - Tree based repr. of programs
+    - Actual code
+    - Bit strings
+*** Binary representation
+    - Represent everything as binary numbers, e.g. if we're tuning
+      three numbers in a static program we can simply pick the binary
+      representation.
+    - Advantages:
+      - Planar representation (we can use the same algorithm for
+        whatever we're evolving as long as it's a binary string)
+    - Disadvantages:
+      - Crossover can be deleterious
+      - Might need very long bitstrings
+      - You can't guess what the hell is going on
+*** Tree based program representation:
+    Example:
+     if (Y - X < Y) {
+       abs(X*Y)
+     } else {
+       sqrt(X+Y)
+     }
+                     IF_<_ELSE
+                      /  |  \ \____
+                     /   |   \     \
+                    -    Y    abs   \
+                  /  \         |    sqrt
+                 Y    X        *      \
+                              / \      +
+                             X   Y    / \
+                                     X   Y
+    - Advantages:
+      - Easy to translate trees into code
+      - Easy to generate trees randomly
+      - Swap branches for crossover
+      - Expressive search space
+      - Possibility for surprise (?)
+      - You don't need to plan the program structure
+    - Disadvantages:
+      - Search space might be too large => search might not converge quickly
+      - Might need a lot of experimentation with ingredients (?)
+    - Ingredients:
+      - Tree -> code converter
+      - Terminal set (variables, integers, etc)
+      - Function set (+, *, etc)
+    - Random generation: Start with terminal node and replace it with
+      a function node, putting terminal nodes as leaves. Repeat until
+      big enough.
+*** Selection mechanisms
+    If we have a fitness function, we want to mimic natural evolution:
+    fitter individuals more likely to produce offsprings, bit even
+    quite unfit individuals have a possibility (-> diversity)
+**** Elitism
+     Choose all the individuals with fitness > than some value to advance
+**** Truncation
+     Top individuals are allowed to crossover
+**** Fitness proportionate selection:
+     Each individual is selected with a probability proportional to
+     fitness: p(i) = f(i) / Sum(forall j. f(j))
+**** Tournament selection:
+     Choose tournament size, T. Group population in T-sized group and
+     pic the best according to the fitness.
+**** Intermediate population:
+     Choose individuals first, do crossover and the offspring is the
+     next generation. Genius.
+     To choose the intermediate population:
+     - We calculate E(i) = f(i) / avg. fitness
+     - Let 'n' be the integer part of E(i) and 'p' the decimal
+       part. We put 'n' copies of 'i' in the intermediate population,
+       and an extra copy with probability 'p'.
+*** Producing new generations
+**** Crossover
+     - One point crossover:
+       If you have P1 and P2, split them both at the same position and
+       shuffle the pieces: [1,2,3,4] [5,6,7,8] => [1,2,7,8] [5,6,3,4]
+     - Two point crossover:
+       Choose two positions P and Q where P > Q, and swap the central
+       sections: [1,2,3,4] [5,6,7,8] => [1,6,7,4] [5,2,3,8]
+     - When using program trees you swap branches, possibly checking
+       that the types are respected.
+**** Mutation
+     Mutate something at random (e.g. a bit in the bitstring)
+*** User-Centric evolution
+    - The user can specify a mathematical/algorithmic fitness function, or
+    - Act directly as the fitness function (they score the phenotypes
+      manually)
 * Design Grammars
 * Non-Photorealistic Rendering
 * Steering Behaviours
