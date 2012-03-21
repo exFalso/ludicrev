@@ -1,14 +1,15 @@
-Introduction
-Computational Creativity
-Evolutionary Design
-Design Grammars
-Non-Photorealistic Rendering
-Steering Behaviours
-Pathfinding
-Behaviour Trees
-Adaptive Games
-Interactive Play
-Designing for Play
-Social Networks
-Monte Carlo Tree Search
-Revision Lecture
+
+** Introduction
+** Computational Creativity
+** Evolutionary Design
+** Design Grammars
+** Non-Photorealistic Rendering
+** Steering Behaviours
+** Pathfinding
+** Behaviour Trees
+** Adaptive Games
+** Interactive Play
+** Designing for Play
+** Social Networks
+** Monte Carlo Tree Search
+** Revision Lecture
