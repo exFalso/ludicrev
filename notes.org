@@ -1,6 +1,113 @@
 
 * Introduction
 * Computational Creativity
+** Sub-area of AI
+** Software that exhibits behaviour that would be deemed creative if exhibited by a person
+** Takes some creative responsibility
+** Aims
+   - Autonomously creative software
+   - Help understanding of human creativity
+** Resistance to creativity research in AI
+** Overlap with Ludic Computing
+   - Content generation
+   - Adaptive games
+   - Computer Art
+   - Assessment of enjoyment
+** Other applications
+   - Linguistics
+   - Music
+   - Visual Arts
+   - Pure Maths
+** Example
+   - Automated Mathematician
+     - Reinvented Goldbach's conjecture
+** Issues
+*** Achieving creativity in artefact creation
+    - Methodological issues
+*** Scientific assessment of progress towards creativity
+** Paradigms
+*** Problem solving
+    - Intelligent task: set/sequence of problems to be solved by individual agents
+    - Specialist problem solvers
+*** Artefact generation
+    - Generate something of cultural value (aesthetic/utilitarian)
+    - Specialist generative techniques
+*** Problem solving vs. Artefact generation
+    - First is to think for us, second is to make us think more
+**** AI tends to be problem-solving
+     - Constraint solvers
+     - Theorem provers
+     - Machine learning systems
+**** Comp. Creativity
+     - Evolutionary programming
+     - Case-based reasoning
+     - Conceptual blending
+     - Metaphorical reasoning
+** Evolutionary approach
+   - Programs represented as trees
+   - Mimicking biological evolution
+     - Crossover, mutation, survival of fittest
+   - Advantages
+     - Little domain knowledge required
+     - Evolution -> "surprising" results
+     - Fitness can be supplied by human
+     - Higher level reasoning: invention of fitness functions
+   - Drawbacks
+     - Difficult to drive evolution
+     - Long time to converge
+   - Uses: Art, scientific discovery
+** Case-based Reasoning
+   - Appeal to previous cases
+   - Retrieval -> Re-use -> Revision -> Retention
+   - Advantages
+     - Appeals to known high value artefacts
+   - Drawbacks
+     - Needs large case-base
+     - "Pastiches of other people's work"
+** Conceptual blending
+   - From cognitive linguistics
+     - Example: horse + bird = pegasus
+   - Advantages
+     - Cognitively plausible
+     - "Surprising" blends
+   - Drawbacks
+     - Doesn't explaing where the concepts come from
+** Methodological issues
+*** Metaphor and analogy
+    - Can your creative system:
+      - Learn styles from others
+      - Build new artefacts from old ones
+      - Apply previously successful reasoning in new situations
+*** Combining systems
+    - Consider whether your system:
+      - Reinvents the wheel
+      - Could achieve your goal by combining existing techniques
+      - Could use systematic combination (e.g. multi-agent systems)
+*** Assessing Creativity
+    - Difficult to assess
+    - Required to define progress
+**** Approaches
+***** Assess artefacts
+      - In terms of output
+      - Boden:
+	- P-creativity vs H-creativity (personal-historical)
+	  - Of the artefact
+	- Exploratory bs Transformational
+	  - Of the search space
+	- Wiggins: formalism
+***** Assess creative processes
+      - Vicious circle, as computational processes are inherently
+        non-creative
+      - Solution: Manage the perception of creativity addressing their
+        criticism
+	- They will eventually admit that it's creative
+      - Creativity tripod: skill, appreciation, imagination
+      - Wundt curve
+***** Analogue to Turing test
+      - Can humans differentiate between computational creativity and
+        human creativity?
+** Creative software is designed to think people more, not less
+
 * Evolutionary Design
 ** Idea: Encode programs with some representation and evolve the representation
    - To find a coding which solves a problem
@@ -130,6 +237,91 @@
     - Act directly as the fitness function (they score the phenotypes
       manually)
 * Design Grammars
+** HSVA Colour model
+   - Hue, Saturation, Value, Alpha
+** Polygons
+   - You know what those are cmon
+** Content generation: production of polygons
+** Shape grammars: polygon generation
+*** Random generation
+    Given a set of production rules and S
+    1. Start with one node that has "S"
+    2. Randomly choose a node D
+    3. Randomly choose a non-terminal letter L in D
+    4. Randomly choose a production rule that can be applied to L
+    5. Apply the rule and add the result X to the tree
+    6. If only non terminals in tree or some termination cond. holds
+       -> stop and return X
+    7. Otherwise repeat from 2
+*** Bias
+    - Assign probabilities to individual production rules
+*** Shape grammars: letters replaced by
+    - Shapes
+    - Transformations
+*** Example: CFDG (_ means space, emacs deletes simple whitespace)
+      | startShape R       |
+      |                    |
+      | rule R {           |
+      | __CIRCLE { }       |
+      | __R {x 1 size 0.9} |
+      | }                  |
+    - startShape: starting rule
+    - rule: defines a rule
+    - can define transformation parameters in {}
+    - transformations: x, y, rotate, brightness
+    - path: defines a shape
+    - rules can be assigned a probability
+      | rule SomeRule 5 {...} |
+      - 5 is relative probability
+    - repetition:
+      | n * {transformation} |
+*** L-Systems
+    - Originally used to describe growth in organisms
+    - Artificial Life, fractal image generators
+    - Formal grammar + as many production rules as possible are
+      applied at each iteration
+    - Grammar, no notion of terminal vs non-terminal
+    - Initiator: initial word
+    - Production rules: one letter to word
+    - At each iteration every character is looked at
+    - Randomness:
+      - Order of production
+      - Assign prob. to each prod. rule
+      - Stochastic L-system
+    - Example: Turtle graphics
+      - Grammar: Forward, Back, Right, Left
+    - Some letters may not appear in final output
+*** Ludic qualities
+    - Simple grammars -> complex images
+    - Simple to program
+    - Small tweaking: stable
+    - Large tweaking: surprising results
+    - Fast implementation
+*** Terrain Modelling
+    - Game designers: too laborious to create terrain and vegetation
+    - Need procedural generation
+    - L-Studio: ecosystem modelling, plant generation
+    - Cellular development model
+      - Extensions to L-systems: parametric, timed, differential
+      - Cells: Simulations of biological entities
+      - Evolutionary techniques
+*** City generation
+    - More difficult than terrain as we have higher standards
+**** Pascal Muller: CityEngine
+***** L-system is used to produce a string of modules
+***** Each is a command for city generation
+***** They produce parametric templates ("ideal successor")
+***** Parameters adjusted according to
+      - globalGoals (e.g. population density, road patterns)
+      - localConstraints (e.g. road legal)
+	- may fix problems (e.g. pruning graph)
+***** Building generation
+      - Spaces between streets into blocks
+      - Parametric stochastic L-systems -> string of modules
+      - Modules: transformations, extrusion, terminatino, geometric
+        template
+      - Initiator: bounding box of building site
+
 * Non-Photorealistic Rendering
 ** Image filtering
    - Images are matrices of {R,G,B,A} (A is alpha transparency), with
