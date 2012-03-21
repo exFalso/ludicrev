@@ -2,134 +2,229 @@
 * Introduction
 * Computational Creativity
 * Evolutionary Design
-** Evolutionary approach
-*** Idea: Encode programs with some representation and evolve the representation
-    - To find a coding which solves a problem
-    - To improve a program performance (efficiency etc.)
-    - Simply to inspect the evolved output
-*** Terminology
-    - Genotype: A coding
-    - Population: The group of genotypes we're evolving
-    - Phenotype: The representation of the genotype (e.g. the actual
-      program the genotype is representing)
-    - Generation: A "batch" of genotypes
-    - Crossover: Two genotypes having sex
-    - Offspring: The result of the crossover
-    - Fitness: Assessment of a phenotype
-*** Overview of method
-    1. Generate initial population randomly
-    2. Evaluate each phenotype
-    3. Pick the fittest genotypes, do crossover and keep the children
-       for the next generation - you might want to introduce some
-       random mutations.
-    4. Check the termination conditions, if they're met we're done, if
-       not go back to step 2.
-    You should keep track of the fittest phenotype encountered so that
-    you can pick that when the algos finishes.
-*** Challenges
-    - Representing codings, they need to be:
-      - Interpretable
-      - Randomizable
-      - Easily manipulable (to do crossover and mutation)
-    - Select pair of individuals to be the parents, needs to specify:
-      - Fitness function
-      - Selection mechanism
-    - Producing offspring, needs to specify:
-      - Crossover operation
-      - Mutations
-*** Types of codings
-    - No coding, you manipulate the result directly - e.g. pictures
-    - Coding "specific to the task at hand" - e.g. tree of filters to
-      apply to a picture
-    - Parameters for a given program - this is obvious (we tune some
-      parameter in a program)
-    - Tree based repr. of programs
-    - Actual code
-    - Bit strings
-*** Binary representation
-    - Represent everything as binary numbers, e.g. if we're tuning
-      three numbers in a static program we can simply pick the binary
-      representation.
-    - Advantages:
-      - Planar representation (we can use the same algorithm for
-        whatever we're evolving as long as it's a binary string)
-    - Disadvantages:
-      - Crossover can be deleterious
-      - Might need very long bitstrings
-      - You can't guess what the hell is going on
-*** Tree based program representation:
-    Example:
-     if (Y - X < Y) {
-       abs(X*Y)
-     } else {
-       sqrt(X+Y)
-     }
-                     IF_<_ELSE
-                      /  |  \ \____
-                     /   |   \     \
-                    -    Y    abs   \
-                  /  \         |    sqrt
-                 Y    X        *      \
-                              / \      +
-                             X   Y    / \
-                                     X   Y
-    - Advantages:
-      - Easy to translate trees into code
-      - Easy to generate trees randomly
-      - Swap branches for crossover
-      - Expressive search space
-      - Possibility for surprise (?)
-      - You don't need to plan the program structure
-    - Disadvantages:
-      - Search space might be too large => search might not converge quickly
-      - Might need a lot of experimentation with ingredients (?)
-    - Ingredients:
-      - Tree -> code converter
-      - Terminal set (variables, integers, etc)
-      - Function set (+, *, etc)
-    - Random generation: Start with terminal node and replace it with
-      a function node, putting terminal nodes as leaves. Repeat until
-      big enough.
-*** Selection mechanisms
-    If we have a fitness function, we want to mimic natural evolution:
-    fitter individuals more likely to produce offsprings, bit even
-    quite unfit individuals have a possibility (-> diversity)
-**** Elitism
-     Choose all the individuals with fitness > than some value to advance
-**** Truncation
-     Top individuals are allowed to crossover
-**** Fitness proportionate selection:
-     Each individual is selected with a probability proportional to
-     fitness: p(i) = f(i) / Sum(forall j. f(j))
-**** Tournament selection:
-     Choose tournament size, T. Group population in T-sized group and
-     pic the best according to the fitness.
-**** Intermediate population:
-     Choose individuals first, do crossover and the offspring is the
-     next generation. Genius.
-     To choose the intermediate population:
-     - We calculate E(i) = f(i) / avg. fitness
-     - Let 'n' be the integer part of E(i) and 'p' the decimal
-       part. We put 'n' copies of 'i' in the intermediate population,
-       and an extra copy with probability 'p'.
-*** Producing new generations
-**** Crossover
-     - One point crossover:
-       If you have P1 and P2, split them both at the same position and
-       shuffle the pieces: [1,2,3,4] [5,6,7,8] => [1,2,7,8] [5,6,3,4]
-     - Two point crossover:
-       Choose two positions P and Q where P > Q, and swap the central
-       sections: [1,2,3,4] [5,6,7,8] => [1,6,7,4] [5,2,3,8]
-     - When using program trees you swap branches, possibly checking
-       that the types are respected.
-**** Mutation
-     Mutate something at random (e.g. a bit in the bitstring)
-*** User-Centric evolution
+** Idea: Encode programs with some representation and evolve the representation
+   - To find a coding which solves a problem
+   - To improve a program performance (efficiency etc.)
+   - Simply to inspect the evolved output
+** Terminology
+   - Genotype: A coding
+   - Population: The group of genotypes we're evolving
+   - Phenotype: The representation of the genotype (e.g. the actual
+     program the genotype is representing)
+   - Generation: A "batch" of genotypes
+   - Crossover: Two genotypes having sex
+   - Offspring: The result of the crossover
+   - Fitness: Assessment of a phenotype
+** Overview of method
+   1. Generate initial population randomly
+   2. Evaluate each phenotype
+   3. Pick the fittest genotypes, do crossover and keep the children
+      for the next generation - you might want to introduce some
+      random mutations.
+   4. Check the termination conditions, if they're met we're done, if
+      not go back to step 2.
+   You should keep track of the fittest phenotype encountered so that
+   you can pick that when the algos finishes.
+** Challenges
+   - Representing codings, they need to be:
+     - Interpretable
+     - Randomizable
+     - Easily manipulable (to do crossover and mutation)
+   - Select pair of individuals to be the parents, needs to specify:
+     - Fitness function
+     - Selection mechanism
+   - Producing offspring, needs to specify:
+     - Crossover operation
+     - Mutations
+** Types of codings
+   - No coding, you manipulate the result directly - e.g. pictures
+   - Coding "specific to the task at hand" - e.g. tree of filters to
+     apply to a picture
+   - Parameters for a given program - this is obvious (we tune some
+     parameter in a program)
+   - Tree based repr. of programs
+   - Actual code
+   - Bit strings
+   Evolving parameters is known as "genetic algorithms", evolving
+   programs is known as "genetic programming".
+** Binary representation
+   - Represent everything as binary numbers, e.g. if we're tuning
+     three numbers in a static program we can simply pick the binary
+     representation.
+   - Advantages:
+     - Planar representation (we can use the same algorithm for
+       whatever we're evolving as long as it's a binary string)
+   - Disadvantages:
+     - Crossover can be deleterious
+     - Might need very long bitstrings
+     - You can't guess what the hell is going on
+** Tree based program representation:
+   Example:
+    if (Y - X < Y) {
+      abs(X*Y)
+    } else {
+      sqrt(X+Y)
+    }
+                    IF_<_ELSE
+                     /  |  \ \____
+                    /   |   \     \
+                   -    Y    abs   \
+                 /  \         |    sqrt
+                Y    X        *      \
+                             / \      +
+                            X   Y    / \
+                                    X   Y
+   - Advantages:
+     - Easy to translate trees into code
+     - Easy to generate trees randomly
+     - Swap branches for crossover
+     - Expressive search space
+     - Possibility for surprise (?)
+     - You don't need to plan the program structure
+   - Disadvantages:
+     - Search space might be too large => search might not converge quickly
+     - Might need a lot of experimentation with ingredients (?)
+   - Ingredients:
+     - Tree -> code converter
+     - Terminal set (variables, integers, etc)
+     - Function set (+, *, etc)
+   - Random generation: Start with terminal node and replace it with
+     a function node, putting terminal nodes as leaves. Repeat until
+     big enough.
+** Selection mechanisms
+   If we have a fitness function, we want to mimic natural evolution:
+   fitter individuals more likely to produce offsprings, bit even
+   quite unfit individuals have a possibility (-> diversity)
+*** Elitism
+    Choose all the individuals with fitness > than some value to advance
+*** Truncation
+    Top individuals are allowed to crossover
+*** Fitness proportionate selection:
+    Each individual is selected with a probability proportional to
+    fitness: p(i) = f(i) / Sum(forall j. f(j))
+*** Tournament selection:
+    Choose tournament size, T. Group population in T-sized group and
+    pic the best according to the fitness.
+*** Intermediate population:
+    Choose individuals first, do crossover and the offspring is the
+    next generation. Genius.
+    To choose the intermediate population:
+    - We calculate E(i) = f(i) / avg. fitness
+    - Let 'n' be the integer part of E(i) and 'p' the decimal
+      part. We put 'n' copies of 'i' in the intermediate population,
+      and an extra copy with probability 'p'.
+** Producing new generations
+*** Crossover
+    - One point crossover:
+      If you have P1 and P2, split them both at the same position and
+      shuffle the pieces: [1,2,3,4] [5,6,7,8] => [1,2,7,8] [5,6,3,4]
+    - Two point crossover:
+      Choose two positions P and Q where P > Q, and swap the central
+      sections: [1,2,3,4] [5,6,7,8] => [1,6,7,4] [5,2,3,8]
+    - When using program trees you swap branches, possibly checking
+      that the types are respected.
+*** Mutation
+    Mutate something at random (e.g. a bit in the bitstring)
+** User-Centric evolution
     - The user can specify a mathematical/algorithmic fitness function, or
     - Act directly as the fitness function (they score the phenotypes
       manually)
 * Design Grammars
 * Non-Photorealistic Rendering
+** Image filtering
+   - Images are matrices of {R,G,B,A} (A is alpha transparency), with
+     0 <= R,G,B,A <= 255
+   - Alternatively, {H,S,V,A}, where H = hue, S = saturation, and V =
+     value. 0 <= H <= 360, 0 <= S, V, A <= 1.
+*** Basic transformations:
+    - safe(X) = min(max(X, 0), 255)
+    - greyscale(R,G,B) = round(avg(R, G, B))
+    - inversion(X) = 255 - X
+    - Change brightness
+      - In HSV model increase/decrease S or V
+      - In RGB,
+        brightness({R, G, B} , c) = {safe(R+c), safe(G+c), safe(B+c)}
+    - Add colour
+      add({R, G, B}, {r, g, b}) = {safe(R+r), safe(G+g), safe(B+b)}, or
+                                = {average(R, r), ...}
+    - Noise
+      - Given a range 'r', generate random numbers r1 r2 and r3 and then
+        add({R, G, B}, {r1, r2, r3}).
+      - In HSV, randomly vary one of H, S, or V.
+*** Median transforms
+    - For a point (x, y), define a function N(x, y) that gives the
+      neighbouring pixels (might be a circle, or a square, or
+      whatever)
+    - Then fill all the neighbourhood pixels with the average colour.
+*** Treshold transform
+    - Maps ranges of pixels to a certain RGB value (r, g, b)
+    - Range defined as triple of pairs of RGB values:
+      (RL, RH), (GL, GH), (BL, BH)
+    - Then
+      R -> r if (RL <= R <= RH), else R
+      G -> g if (GL <= G <= GH), else G
+      B -> b if (BL <= B <= BH), else B
+*** TODO Lookup transforms
+*** Convolution transforms
+    - Set up a series of weights for the neighbouring pixels:
+      | w(-1,1) | w(0,-1) | w(1,-1) |
+      | w(-1,0) | w(0,0)  | w(1,0)  |
+      | w(-1,1) | w(0,1)  | w(1,1)  |
+    - Then for each point at coord (x, y):
+      R -> safe(round(Sum(forall i, j in {-1,0,1}. w(i, j) * [P(x+i, y+j)]_R)))
+    - Similar for G and B.
+    - The matrix can be of any size.
+** Image compositing
+   Basic idea: for each pair of pixels at the same position (x, y) in
+   the two images, do something with them and produce pixel for the
+   result.
+*** Operations:
+    For every function 'f' on a pair of numbers, you do:
+    (R1, G1, B1) (R2, G2, B2) +
+    (safe(f(R1, R2)), safe(f(G1, G2)), safe(f(B1, B2)))
+*** Binary operations:
+    Same as above, but you apply binary operators (OR, XOR, AND) to
+    the binary representation of the colour.
+** Image filter trees
+   Simply diagram that telly you which filters to apply, for example
+          .C.
+   A--B--<   >--E--output
+          `D`
+   Where A B C and D are filters and E is a composition.
+** Image segmentation
+   Segments the images in regions of similar colours.
+   Process to grow regions:
+   1. Start at S=(0,0), and make the colour there (C) the colour for
+      the neighbourhood
+   2. For each neighbouring point P, check if the euclidean distance
+      between C and P's colour is less than some threshold T. If it
+      is, add it to the neighbourhood. Repeat for the added points.
+   3. If we can't add any point, then the region is complete. Look for
+      the next point which has not been assigned to a region (left to
+      right, top to bottom) and start a new region. If there are no
+      points to be added, stop.
+*** Pre processing
+    You can have a palette of colours and replace every colour with
+    the closest colour in the palette. Then, you run the algorithm
+    above with T = 0.
+** Action contours
+   Idea: iteratively improve a path around a region so that it
+   approximates the boundary while remaining smooth.
+   Improvement is defined in terms of minimising two energy components:
+   - Internal energy: based on the distance between the points in the
+     path and the amount of curvature => lower energy path = less
+     curvature and less elasticity.
+   - External energy: the amount of contrast in the image at the
+     co-ordinate where the path is.
+   These two energy minimised give a smooth curve relatively close to
+   the outline.
+** Bezier curves
+   - Two boundary points P0 and P3 (the start and end of the curve),
+     and two control points P1 and P2
+   - The cubic bezier is defined by
+     B(t) = (1 - t)^3 * P0 + 3(1 - t)^2 * t * P1 +
+     3(1 = t) * t^2 * P2 + t^ 3 * P3
+   - t in [0, 1]. So B(0.5) will be in the middle of the curve, etc.
 * Steering Behaviours
 * Pathfinding
 * Behaviour Trees
